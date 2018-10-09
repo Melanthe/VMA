@@ -1,22 +1,14 @@
+package Gauss;
+
+import java.io.IOException;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class Gauss {
     public static void main(String[] args) {
 
         try {
 
-            Scanner sc = new Scanner(System.in);
-
-            System.out.println("Enter a size of the matrix: ");
-
-            while(!sc.hasNextInt()) {
-                System.out.println("Incorrect input!");
-                sc.next();
-            }
-            int size = sc.nextInt();
-
-            Matrix matrix = new Matrix(size);
+            Matrix matrix = new Matrix();
             matrix.input();
 
             matrix.showOriginal();
@@ -28,7 +20,16 @@ public class Gauss {
             matrix.showSolution();
 
             matrix.showDet();
-            matrix.discrepancyVector();
+            matrix.showDiscrepancyVector();
+
+            matrix.showInverseMatrix();
+            matrix.showDiscrepancyMatrix();
+
+        } catch (InputMismatchException e) {
+            System.out.println("Incorrect type of data!");
+
+        } catch (IOException e) {
+            System.out.println("Incorrect input!");
 
         } catch (Exception e) {
             System.out.println(e);
