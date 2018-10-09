@@ -117,7 +117,7 @@ public class Matrix {
         for (int i = size - 1; i >= 0; i--) {
 
             for (int j = i + 1; j < size; j++) {
-                sum += resultMatrix[i][j] * resultFreeTerms[j];
+                sum += resultMatrix[i][j] * solutions[j];
             }
             solutions[i] = resultFreeTerms[i] - sum;
         }
@@ -129,7 +129,7 @@ public class Matrix {
         int line = step;
 
         for (int i = step; i < size; ++i) {
-            if (resultMatrix[i][step] > max) {
+            if (Math.abs(resultMatrix[i][step]) > Math.abs(max)) {
                 max = resultMatrix[i][step];
                 line = i;
             }
