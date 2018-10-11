@@ -12,8 +12,10 @@ public class Matrix {
 
     private double[][] resultMatrix;
     private double[] resultFreeTerms;
-    private double[][] inverseMatrix;
     private double[] solutions;
+
+    private double[][] inverseMatrix;
+    double[][] unitMatrix;
 
     private double[] vDiscrepancy;
     private double[][] mDiscrepancy;
@@ -39,6 +41,7 @@ public class Matrix {
         resultFreeTerms = new double[size];
         inverseMatrix = new double[size][size];
         solutions = new double[size];
+        unitMatrix = new double[size][size];
     }
 
     public Matrix() {
@@ -64,7 +67,19 @@ public class Matrix {
             }
 
             for (int i = 0; i < size; ++i) {
-                inverseMatrix[i][i] = 1;
+                for (int j = 0; j < size; j++) {
+
+                    if(i == j) {
+                        unitMatrix[i][j] = 1;
+                    } else {
+                        unitMatrix[i][j] = 0;
+                    }
+                }
+            }
+
+
+            for (int i = 0; i < size; i++) {
+                System.arraycopy(unitMatrix[i], 0, inverseMatrix[i], 0, size);
             }
         }
     }
@@ -95,7 +110,8 @@ public class Matrix {
                     resultMatrix[i][j] -= tmp * resultMatrix[step][j];
                 }
                 resultFreeTerms[i] -= tmp * resultFreeTerms[step];
-                for (int k = 0; i < size; ++i) {
+
+                for (int k = 0; k < size; ++k) {
                     inverseMatrix[i][k] -= tmp * inverseMatrix[step][k];
                 }
             }
@@ -111,16 +127,32 @@ public class Matrix {
     public void backElimination() {
 
         double sum = 0;
-
-        solutions[size - 1] = resultFreeTerms[size - 1];
+        double[] sumInverse = new double[size];
+        double[][] inverseSolutions = new double[size][size];
 
         for (int i = size - 1; i >= 0; i--) {
 
             for (int j = i + 1; j < size; j++) {
+
                 sum += resultMatrix[i][j] * solutions[j];
+
+                for (int k = 0; k < size; ++k) {
+                    sumInverse[k] += resultMatrix[i][j] * inverseSolutions[j][k];
+                }
             }
+
             solutions[i] = resultFreeTerms[i] - sum;
+            sum = 0;
+
+            for (int k = 0; k < size; ++k) {
+                inverseSolutions[i][k] = inverseMatrix[i][k] - sumInverse[k];
+            }
+            for (int k = 0; k < size; ++k) {
+                sumInverse[k] = 0;
+            }
         }
+
+        inverseMatrix = inverseSolutions;
     }
 
     private int findMaxLine(int step) {
@@ -158,7 +190,7 @@ public class Matrix {
             for (int i = 0; i < x.length; ++i) {
                 for (int j = 0; j < y[0].length; ++j) {
                     for (int k = 0; k < y.length; ++k) {
-                        res[i][j] += x[k][i] * y[j][k];
+                        res[i][j] += x[i][k] * y[k][j];
                     }
                 }
             }
@@ -234,18 +266,6 @@ public class Matrix {
 
     private void discrepancyMatrix() throws Exception {
 
-        double[][] unitMatrix = new double[size][size];
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; j++) {
-
-                if(i == j) {
-                    unitMatrix[i][j] = 1;
-                } else {
-                    unitMatrix[i][j] = 0;
-                }
-            }
-        }
-
         mDiscrepancy = minusMatrix(matrixMultiple(originMatrix, inverseMatrix), unitMatrix);
     }
 
@@ -284,21 +304,26 @@ public class Matrix {
 
     public void showSolution() {
         System.out.println("Solution: \n");
-        showVector(solutions);
+
+        for (double item : solutions) {
+
+            System.out.printf("%.5f ", item);
+        }
+        System.out.println();
     }
 
     public void showDet() {
 
-        System.out.printf("\nDeterminant:\n\n%.5f \n", det);
+        System.out.printf("\nDeterminant:\n\n%.5f \n\n", det);
     }
 
     public void showInverseMatrix() {
 
-        System.out.println("\nInverse matrix: ");
+        System.out.println("\nInverse matrix: \n");
 
         for (double[] row : inverseMatrix) {
             for (double item : row) {
-                System.out.print(item + " ");
+                System.out.printf("%.5f ", item);
             }
             System.out.println();
         }
@@ -310,7 +335,7 @@ public class Matrix {
 
         discrepancyVector();
 
-        System.out.println("\nDiscrepancy vector: ");
+        System.out.println("\nDiscrepancy vector: \n");
         showVector(vDiscrepancy);
     }
 
@@ -318,7 +343,7 @@ public class Matrix {
 
         discrepancyMatrix();
 
-        System.out.println("\nDiscrepancy matrix: ");
+        System.out.println("\nDiscrepancy matrix: \n");
 
         for (double[] row : mDiscrepancy) {
             for (double item : row) {
