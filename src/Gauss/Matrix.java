@@ -2,6 +2,7 @@ package Gauss;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Matrix {
@@ -115,7 +116,6 @@ public class Matrix {
                     inverseMatrix[i][k] -= tmp * inverseMatrix[step][k];
                 }
             }
-
             det *= lead;
         }
 
@@ -157,12 +157,12 @@ public class Matrix {
 
     private int findMaxLine(int step) {
 
-        double max = resultMatrix[step][step];
+        double max = Math.abs(resultMatrix[step][step]);
         int line = step;
 
         for (int i = step; i < size; ++i) {
-            if (Math.abs(resultMatrix[i][step]) > Math.abs(max)) {
-                max = resultMatrix[i][step];
+            if (Math.abs(resultMatrix[i][step]) > max) {
+                max = Math.abs(resultMatrix[i][step]);
                 line = i;
             }
         }
@@ -173,9 +173,19 @@ public class Matrix {
     private void swapLines(int x, int y) {
 
         if (x != y) {
+
             double[] tmp = resultMatrix[x];
+            double tmpFreeTerms = resultFreeTerms[x];
+
             resultMatrix[x] = resultMatrix[y];
             resultMatrix[y] = tmp;
+
+            resultFreeTerms[x] = resultFreeTerms[y];
+            resultFreeTerms[y] = tmpFreeTerms;
+
+            tmp = inverseMatrix[x];
+            inverseMatrix[x] = inverseMatrix[y];
+            inverseMatrix[y] = tmp;
 
             sign = !sign;
         }
