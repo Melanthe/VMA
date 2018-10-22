@@ -2,8 +2,7 @@ package Gauss;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Matrix {
 
@@ -52,7 +51,7 @@ public class Matrix {
 
     public void input() throws IOException {
 
-        try (Scanner sc = new Scanner(new File("src/Gauss/matrix.txt")).useDelimiter("[\\r\\n ]+")) {
+        try (Scanner sc = new Scanner(new File("src/matrix.txt")).useDelimiter("[\\r\\n ]+")) {
 
             size = Integer.parseInt(sc.next());
             init(size);
@@ -284,10 +283,10 @@ public class Matrix {
         for (int i = 0; i < matrix.length; ++i) {
             for (int j = 0; j < matrix[0].length; ++j) {
 
-                System.out.printf("%.5f ", matrix[i][j]);
+                System.out.printf("%8.5f ", matrix[i][j]);
             }
 
-            System.out.printf(" %.5f\n", vector[i]);
+            System.out.printf(" | %8.5f\n", vector[i]);
         }
 
         System.out.println();
@@ -297,7 +296,7 @@ public class Matrix {
 
         for (double item : vector) {
 
-            System.out.printf("%.5e ", item);
+            System.out.printf("%8.5e ", item);
         }
         System.out.println();
     }
@@ -317,7 +316,7 @@ public class Matrix {
 
         for (double item : solutions) {
 
-            System.out.printf("%.5f ", item);
+            System.out.printf("%8.5f ", item);
         }
         System.out.println();
     }
@@ -333,7 +332,7 @@ public class Matrix {
 
         for (double[] row : inverseMatrix) {
             for (double item : row) {
-                System.out.printf("%.5f ", item);
+                System.out.printf("%8.5f ", item);
             }
             System.out.println();
         }
@@ -345,7 +344,7 @@ public class Matrix {
 
         discrepancyVector();
 
-        System.out.println("\nDiscrepancy vector: \n");
+        System.out.println("Discrepancy vector: \n");
         showVector(vDiscrepancy);
     }
 
@@ -353,15 +352,49 @@ public class Matrix {
 
         discrepancyMatrix();
 
-        System.out.println("\nDiscrepancy matrix: \n");
+        System.out.println("Discrepancy matrix: \n");
 
         for (double[] row : mDiscrepancy) {
             for (double item : row) {
-                System.out.printf("%.5e ", item);
+                System.out.printf("%12.5e ", item);
             }
             System.out.println();
         }
     }
+
+    public void vectorRate() {
+
+        double rate = Math.abs(vDiscrepancy[0]);
+
+        for (int i = 0; i < size; ++i) {
+            if (Math.abs(vDiscrepancy[i]) > rate) {
+                rate = Math.abs(vDiscrepancy[i]);
+            }
+        }
+
+        System.out.printf("\nRate of discrepancy vector: \n%.5e\n", rate);
+    }
+
+    public void matrixRate() {
+
+        double max = 0.0;
+        double rate = Math.abs(mDiscrepancy[0][0]);
+
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+
+                if(Math.abs(mDiscrepancy[i][j]) > max) {
+                    max = Math.abs(mDiscrepancy[i][j]);
+                }
+            }
+
+            if (max > rate) {
+                rate = max;
+            }
+
+            max = 0.0;
+        }
+
+        System.out.printf("\nRate of discrepancy matrix: \n%.5e\n", rate);
+    }
 }
-
-

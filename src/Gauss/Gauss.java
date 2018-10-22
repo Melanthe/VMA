@@ -25,6 +25,9 @@ public class Gauss {
             matrix.showInverseMatrix();
             matrix.showDiscrepancyMatrix();
 
+            matrix.vectorRate();
+            matrix.matrixRate();
+
         } catch (InputMismatchException e) {
             System.out.println("Incorrect type of data!");
 
