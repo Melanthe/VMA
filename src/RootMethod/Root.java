@@ -183,6 +183,6 @@ public class Root {
     public void showRate() {
 
         System.out.println("Rate of the discrepancy vector: \n");
-        System.out.printf("%.5e", Vectors.rate(discrepancy));
+        System.out.printf("%.5e", Vectors.cubicRate(discrepancy));
     }
 }

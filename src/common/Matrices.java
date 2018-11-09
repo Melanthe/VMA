@@ -1,7 +1,5 @@
 package common;
 
-import java.util.Arrays;
-
 public class Matrices {
 
     public static double[][] transposition(double[][] matrix) {
@@ -40,6 +38,38 @@ public class Matrices {
         } else {
             throw new MyException("Incorrect matrix for multiplication!");
         }
+    }
+
+    public static double[][] multipleWithScalar(double[][] matrix, double scalar) {
+
+        double[][] res = new double[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; ++i) {
+            for (int j = 0; j < matrix[0].length; ++j) {
+
+                res[i][j] = matrix[i][j] * scalar;
+            }
+        }
+
+        return res;
+    }
+
+    public static double[][] divideWithScalar(double[][] matrix, double scalar) throws MyException {
+
+        if (scalar == 0) {
+            throw new MyException("Divide by 0!");
+        }
+
+        double[][] res = new double[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; ++i) {
+            for (int j = 0; j < matrix[0].length; ++j) {
+
+                res[i][j] = matrix[i][j] / scalar;
+            }
+        }
+
+        return res;
     }
 
     public static double[] multipleWithVector(double[][] x, double[] y) throws MyException {
@@ -81,6 +111,18 @@ public class Matrices {
         }
     }
 
+    public static double[][] getUnitMatrix(int size) {
+
+        double[][] res = new double[size][size];
+
+        for (int i = 0; i < size; ++i) {
+
+            res[i][i] = 1;
+        }
+
+        return res;
+    }
+
     public static void show(double[][] matrix) {
 
         for (double[] row : matrix) {
@@ -109,26 +151,24 @@ public class Matrices {
         System.out.println();
     }
 
-    public static double rate(double[][] matrix) {
+    public static double cubicRate(double[][] matrix) {
 
-        double max = 0.0;
-        double rate = Math.abs(matrix[0][0]);
+        double max = Double.MIN_VALUE;
+        double sum = 0.0;
 
         for (int i = 0; i < matrix.length; ++i) {
             for (int j = 0; j < matrix[0].length; ++j) {
 
-                if(Math.abs(matrix[i][j]) > max) {
-                    max = Math.abs(matrix[i][j]);
-                }
+                sum += Math.abs(matrix[i][j]);
             }
 
-            if (max > rate) {
-                rate = max;
+            if (sum > max) {
+                max = sum;
             }
 
-            max = 0.0;
+            sum = 0.0;
         }
 
-        return rate;
+        return max;
     }
 }

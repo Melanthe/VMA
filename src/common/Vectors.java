@@ -8,7 +8,7 @@ public class Vectors {
 
             double[] res = new double[x.length];
 
-            for (int i = 0; i < x.length; i++) {
+            for (int i = 0; i < x.length; ++i) {
 
                 res[i] = x[i] - y[i];
             }
@@ -16,11 +16,89 @@ public class Vectors {
             return res;
 
         } else {
-            throw new MyException("Incorrect vector for minus!");
+            throw new MyException("Incorrect vectors for minus!");
         }
     }
 
-    public static double rate(double[] vector) {
+    public static double[] plus(double[] x, double[] y) throws MyException {
+
+        if (x.length == y.length) {
+
+            double[] res = new double[x.length];
+
+            for (int i = 0; i < x.length; ++i) {
+
+                res[i] = x[i] + y[i];
+            }
+
+            return res;
+
+        } else {
+            throw new MyException("Incorrect vectors for minus!");
+        }
+    }
+
+    public static double[] multipleWithScalar(double[] vector, double scalar) {
+
+        double[] res = new double[vector.length];
+
+        for (int i = 0; i < vector.length; ++i) {
+
+            res[i] = vector[i] * scalar;
+        }
+
+        return res;
+    }
+
+    public static double[] divideWithScalar(double[] vector, double scalar) throws MyException {
+
+        if (scalar == 0) {
+            throw new MyException("Divide by 0!");
+        }
+
+        double[] res = new double[vector.length];
+
+        for (int i = 0; i < vector.length; ++i) {
+
+            res[i] = vector[i] / scalar;
+        }
+
+        return res;
+    }
+
+    public static double[][] multipleColumnWithRow(double[] column, double[] row) throws MyException {
+
+            double[][] res = new double[column.length][row.length];
+
+            for (int i = 0; i < column.length; ++i) {
+                for (int j = 0; j < row.length; ++j) {
+
+                    res[i][j] += column[i] * row[j];
+                }
+            }
+
+            return res;
+    }
+
+    public static double scalarProduct(double[] x, double[] y) throws MyException {
+
+        if (x.length == y.length) {
+
+            double res = 0.0;
+
+            for (int i = 0; i < x.length; ++i) {
+
+                res += x[i] * y[i];
+            }
+
+            return res;
+
+        } else {
+            throw new MyException("Incorrect vectors for scalar product!");
+        }
+    }
+
+    public static double cubicRate(double[] vector) {
 
         double rate = Math.abs(vector[0]);
 

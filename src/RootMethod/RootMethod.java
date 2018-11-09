@@ -4,7 +4,7 @@ import common.MyException;
 
 import java.io.IOException;
 
-public class Main {
+public class RootMethod {
     public static void main(String[] args) {
 
         try {
