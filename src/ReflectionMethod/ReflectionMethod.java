@@ -12,6 +12,7 @@ public class ReflectionMethod {
             rf.input();
             rf.method();
             rf.showOriginalMatrix();
+            rf.showChangedMatrix();
             rf.showSolutions();
             rf.showDiscrepancy();
             rf.showRate();

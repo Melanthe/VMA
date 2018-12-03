@@ -1,7 +1,6 @@
 package RootMethod;
 
 import common.MyException;
-
 import java.io.IOException;
 
 public class RootMethod {
@@ -12,7 +11,7 @@ public class RootMethod {
             Root root = new Root();
 
             root.input();
-            root.showOriginalMatrix();
+            root.showChangedMatrix();
 
             root.rootMethod();
 

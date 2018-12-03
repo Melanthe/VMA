@@ -14,6 +14,9 @@ public class Root {
     private double[][] originMatrix;
     private double[] freeTerms;
 
+    private double[][] changedMatrix;
+    private double[] changedFreeTerms;
+
     private double[][] s;
     private double[] y;
 
@@ -33,6 +36,8 @@ public class Root {
     private void init(int size) {
 
         originMatrix = new double[size][size];
+        changedMatrix = new double[size][size];
+        changedFreeTerms = new double[size];
         s = new double[size][size];
         y = new double[size];
         freeTerms = new double[size];
@@ -69,8 +74,8 @@ public class Root {
         double[][] tmp;
         tmp = Matrices.transposition(originMatrix);
 
-        originMatrix = Matrices.multiple(tmp, originMatrix);
-        freeTerms = Matrices.multipleWithVector(tmp, freeTerms);
+        changedMatrix = Matrices.multiple(tmp, originMatrix);
+        changedFreeTerms = Matrices.multipleWithVector(tmp, freeTerms);
     }
 
     public void rootMethod() {
@@ -95,11 +100,11 @@ public class Root {
 
                     if (i == j) {
 
-                        s[i][j] = Math.sqrt(Math.abs(originMatrix[i][j] - tmpSum));
+                        s[i][j] = Math.sqrt(Math.abs(changedMatrix[i][j] - tmpSum));
 
                     } else {
 
-                        s[i][j] = (originMatrix[i][j] - tmpSum) / s[i][i];
+                        s[i][j] = (changedMatrix[i][j] - tmpSum) / s[i][i];
                     }
                 }
 
@@ -117,7 +122,7 @@ public class Root {
             for (int k = 0; k <= (i - 1); ++k) {
                 tmpSum += s[k][i] * y[k];
             }
-            y[i] = (freeTerms[i] - tmpSum) / s[i][i];
+            y[i] = (changedFreeTerms[i] - tmpSum) / s[i][i];
 
             tmpSum = 0.0;
         }
@@ -149,14 +154,12 @@ public class Root {
         for (int i = 0; i < size; ++i) {
              det *= s[i][i];
         }
-
-
     }
 
-    public void showOriginalMatrix() {
+    public void showChangedMatrix() {
 
-        System.out.println("Original matrix: \n");
-        Matrices.showFull(originMatrix, freeTerms);
+        System.out.println("Changed matrix and free terms: \n");
+        Matrices.showFull(changedMatrix, changedFreeTerms);
     }
 
     public void showSolutions() {

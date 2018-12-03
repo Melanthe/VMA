@@ -12,6 +12,8 @@ public class TridiagonalMethod {
             Tridiag tridiag = new Tridiag();
             tridiag.input();
             tridiag.TridiagonalMethod();
+            tridiag.showOriginalMatrix();
+            tridiag.showCoefficient();
             tridiag.showSolutions();
             tridiag.showDiscrepancy();
             tridiag.showDet();

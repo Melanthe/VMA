@@ -15,6 +15,8 @@ public class SimpleIterationMethod {
             si.showOriginalMatrix();
             si.showSolutions();
             si.showDiscrepancy();
+            si.showPriorIterations();
+            si.showIterations();
             si.showRate();
 
         } catch (IOException e) {
@@ -22,6 +24,5 @@ public class SimpleIterationMethod {
         } catch (MyException e) {
             System.out.println(e);
         }
-
     }
 }

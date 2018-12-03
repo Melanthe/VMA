@@ -152,6 +152,20 @@ public class Tridiag {
         }
     }
 
+    public void showOriginalMatrix() {
+
+        System.out.println("Original matrix:\n");
+        Matrices.showFull(originMatrix, f);
+    }
+
+    public void showCoefficient() {
+
+        System.out.println("Alpha: \n");
+        Vectors.show(alpha);
+        System.out.println("Xi: \n");
+        Vectors.show(xi);
+    }
+
     public void showSolutions() {
 
         System.out.println("Solutions: \n");
@@ -168,6 +182,7 @@ public class Tridiag {
         discrepancy();
         System.out.println("Discrepancy vector: \n");
         Vectors.showExp(discrepancy);
+        System.out.printf("Rate of discrepancy vector: \n\n%.5e\n\n", Vectors.cubicRate(discrepancy));
     }
 
     public void showDet() {

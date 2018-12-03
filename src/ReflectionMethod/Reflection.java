@@ -163,4 +163,10 @@ public class Reflection {
         System.out.println("Rate of the discrepancy vector: \n");
         System.out.printf("%.5e\n\n", Vectors.cubicRate(discrepancy));
     }
+
+    public void showChangedMatrix() {
+
+        System.out.println("Matrix after forward elimination: \n");
+        Matrices.showFull(resultMatrix, resultFreeTerms);
+    }
 }

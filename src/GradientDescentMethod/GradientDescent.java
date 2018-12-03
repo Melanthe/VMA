@@ -1,4 +1,4 @@
-package SimpleIterationMethod;
+package GradientDescentMethod;
 
 import common.Matrices;
 import common.MyException;
@@ -8,22 +8,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class SimpleIteration {
+public class GradientDescent {
 
     private int size;
     private double[][] originMatrix;
     private double[] freeTerms;
 
-    private double[][] matrixB;
-    private double[] vectorG;
     private final double EPSILON;
+    private double[] vectorG;
+
+    private double[][] resultMatrix;
+    private double[] resultFreeTerms;
 
     private double[] solutions;
     private double[] discrepancy;
 
     private int iterations;
 
-    public SimpleIteration(int size) {
+    public GradientDescent(int size) {
 
         init(size);
         iterations = 0;
@@ -37,12 +39,13 @@ public class SimpleIteration {
         originMatrix = new double[size][size];
         freeTerms = new double[size];
         solutions = new double[size];
-        discrepancy = new double[size];
-        matrixB = new double[size][size];
         vectorG = new double[size];
+        discrepancy = new double[size];
+        resultMatrix = new double[size][size];
+        resultFreeTerms = new double[size];
     }
 
-    public SimpleIteration() {
+    public GradientDescent() {
 
         this(0);
     }
@@ -66,22 +69,24 @@ public class SimpleIteration {
 
     private void initMethod() throws MyException {
 
-        double[][] unit = Matrices.getUnitMatrix(size);
-        double[][] transp = Matrices.transposition(originMatrix);
-        double[][] tmpMatrix = Matrices.multiple(transp, originMatrix);
-        double tmpRate = Matrices.cubicRate(tmpMatrix);
+        double[][] tmp = Matrices.transposition(originMatrix);
+        resultMatrix = Matrices.multiple(tmp, originMatrix);
+        resultFreeTerms = Matrices.multipleWithVector(tmp, freeTerms);
 
-        matrixB = Matrices.minus(unit, Matrices.divideWithScalar(tmpMatrix, tmpRate));
-        vectorG = Vectors.divideWithScalar(Matrices.multipleWithVector(transp, freeTerms), tmpRate);
+        for(int i = 0; i < size; ++i) {
+
+            vectorG[i] = resultFreeTerms[i] / resultMatrix[i][i];
+        }
     }
 
     public void method() throws MyException {
 
         initMethod();
-        checkConvergence();
 
         double[] curX = new double[size];
         double[] lastX = vectorG.clone();
+        double[] tmpDiscrepancy;
+        double scalarProduct;
         double tmpRate;
         boolean flag = true;
 
@@ -89,7 +94,11 @@ public class SimpleIteration {
 
             iterations++;
 
-            curX = Vectors.plus(Matrices.multipleWithVector(matrixB, lastX), vectorG);
+            tmpDiscrepancy = Vectors.minus(Matrices.multipleWithVector(resultMatrix, lastX), resultFreeTerms);
+            scalarProduct = Vectors.scalarProduct(tmpDiscrepancy, tmpDiscrepancy) /
+                    Vectors.scalarProduct(Matrices.multipleWithVector(resultMatrix, tmpDiscrepancy), tmpDiscrepancy);
+
+            curX = Vectors.minus(lastX, Vectors.multipleWithScalar(tmpDiscrepancy, scalarProduct));
 
             tmpRate = Vectors.cubicRate(Vectors.minus(curX, lastX));
             if (tmpRate < EPSILON) {
@@ -100,17 +109,6 @@ public class SimpleIteration {
         }
 
         solutions = curX.clone();
-    }
-
-    private void checkConvergence() {
-
-        double rate = Matrices.cubicRate(matrixB);
-
-        if (rate < 1) {
-            System.out.println("\nMethod converges!\nRate of the matrix B is: " + rate + "\n\n");
-        } else {
-            System.out.println("\nCan't say nothing about convergence of the method!\n\n");
-        }
     }
 
     public void showOriginalMatrix() {
@@ -135,16 +133,6 @@ public class SimpleIteration {
         discrepancy();
         System.out.println("Discrepancy vector: \n");
         Vectors.showExp(discrepancy);
-    }
-
-    public void showPriorIterations() {
-
-        double matrixRate = Matrices.cubicRate(matrixB);
-        double vectorRate = Vectors.cubicRate(vectorG);
-
-        double priorIt = (Math.log(EPSILON * (1.0 - matrixRate) / vectorRate) / Math.log(matrixRate)) - 1.0;
-        System.out.println("The number of prior iterations: \n");
-        System.out.printf("%.3f\n\n", priorIt);
     }
 
     public void showIterations() {
