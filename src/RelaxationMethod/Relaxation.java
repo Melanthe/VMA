@@ -31,7 +31,7 @@ public class Relaxation {
         init(size);
         iterations = 0;
         EPSILON = Math.pow(10, -5);
-        OMEGA = 1.5;
+        OMEGA = 1.3;
     }
 
     private void init(int size) {
@@ -75,10 +75,7 @@ public class Relaxation {
         resultMatrix = Matrices.multiple(tmp, originMatrix);
         resultFreeTerms = Matrices.multipleWithVector(tmp, freeTerms);
 
-        for(int i = 0; i < size; ++i) {
-
-            vectorG[i] = resultFreeTerms[i] / resultMatrix[i][i];
-        }
+        vectorG = Vectors.divideWithScalar(resultFreeTerms, Matrices.cubicRate(resultMatrix));
     }
 
     public void method() throws MyException {

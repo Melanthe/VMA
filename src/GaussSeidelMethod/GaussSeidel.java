@@ -73,10 +73,7 @@ public class GaussSeidel {
         resultMatrix = Matrices.multiple(tmp, originMatrix);
         resultFreeTerms = Matrices.multipleWithVector(tmp, freeTerms);
 
-        for(int i = 0; i < size; ++i) {
-
-            vectorG[i] = resultFreeTerms[i] / resultMatrix[i][i];
-        }
+        vectorG = Vectors.divideWithScalar(resultFreeTerms, Matrices.cubicRate(resultMatrix));
     }
 
     public void method() throws MyException {

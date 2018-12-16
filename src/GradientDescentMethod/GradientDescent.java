@@ -15,10 +15,10 @@ public class GradientDescent {
     private double[] freeTerms;
 
     private final double EPSILON;
-    private double[] vectorG;
 
     private double[][] resultMatrix;
     private double[] resultFreeTerms;
+    private double[] vectorG;
 
     private double[] solutions;
     private double[] discrepancy;
@@ -39,10 +39,10 @@ public class GradientDescent {
         originMatrix = new double[size][size];
         freeTerms = new double[size];
         solutions = new double[size];
-        vectorG = new double[size];
         discrepancy = new double[size];
         resultMatrix = new double[size][size];
         resultFreeTerms = new double[size];
+        vectorG = new double[size];
     }
 
     public GradientDescent() {
@@ -73,10 +73,7 @@ public class GradientDescent {
         resultMatrix = Matrices.multiple(tmp, originMatrix);
         resultFreeTerms = Matrices.multipleWithVector(tmp, freeTerms);
 
-        for(int i = 0; i < size; ++i) {
-
-            vectorG[i] = resultFreeTerms[i] / resultMatrix[i][i];
-        }
+        vectorG = Vectors.divideWithScalar(resultFreeTerms, Matrices.cubicRate(resultMatrix));
     }
 
     public void method() throws MyException {
