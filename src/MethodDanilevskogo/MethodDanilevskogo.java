@@ -12,8 +12,12 @@ public class MethodDanilevskogo {
             Danilevskogo dv = new Danilevskogo();
             dv.input();
             dv.makeFrobeniusMatrix();
+            dv.getEigenVectors();
+
             dv.showOriginalMatrix();
             dv.showFrobeniusMatrix();
+            dv.showEigenVectors();
+            dv.showDiscrepancy();
 
         } catch (IOException e) {
             System.out.println("Input error!");

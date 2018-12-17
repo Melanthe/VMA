@@ -30,7 +30,7 @@ public class Relaxation {
 
         init(size);
         iterations = 0;
-        EPSILON = Math.pow(10, -5);
+        EPSILON = Math.pow(10, -25);
         OMEGA = 1.3;
     }
 

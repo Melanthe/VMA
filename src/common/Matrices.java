@@ -128,7 +128,7 @@ public class Matrices {
         for (double[] row : matrix) {
             for (double item : row) {
 
-                System.out.printf("%8.5f ", item);
+                System.out.printf("%10.5f ", item);
             }
 
             System.out.println();
@@ -142,10 +142,24 @@ public class Matrices {
         for (int i = 0; i < matrix.length; ++i) {
             for (int j = 0; j < matrix[0].length; ++j) {
 
-                System.out.printf("%8.5f ", matrix[i][j]);
+                System.out.printf("%10.5f ", matrix[i][j]);
             }
 
             System.out.printf(" | %8.5f\n", vector[i]);
+        }
+
+        System.out.println();
+    }
+
+    public static void showExp(double[][] matrix) {
+
+        for (double[] row : matrix) {
+            for (double item : row) {
+
+                System.out.printf("%12.5e ", item);
+            }
+
+            System.out.println();
         }
 
         System.out.println();

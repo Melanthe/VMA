@@ -111,6 +111,11 @@ public class Vectors {
         return rate;
     }
 
+    public static double[] rationing(double[] vector) throws MyException {
+
+        return Vectors.divideWithScalar(vector, Vectors.cubicRate(vector));
+    }
+
     public static void show(double[] vector) {
 
         for (double item : vector) {

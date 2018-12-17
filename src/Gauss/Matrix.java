@@ -1,5 +1,7 @@
 package Gauss;
 
+import common.Matrices;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -31,6 +33,18 @@ public class Matrix {
         init(size);
         sign = false;
         det = 1;
+    }
+
+    public Matrix(double[][] matrix, double[] freeTerms) {
+
+        this(matrix.length);
+
+        for (int i = 0; i < size; ++i) {
+            this.originMatrix[i] = matrix[i].clone();
+        }
+        this.freeTerms = freeTerms.clone();
+
+        change();
     }
 
     private void init(int size) {
@@ -84,6 +98,16 @@ public class Matrix {
         }
     }
 
+    private void change() {
+
+        for (int i = 0; i < size; ++i) {
+            resultMatrix[i] = originMatrix[i].clone();
+        }
+        resultFreeTerms = freeTerms.clone();
+        unitMatrix = Matrices.getUnitMatrix(size);
+        inverseMatrix = Matrices.getUnitMatrix(size);
+    }
+
     public void forwardElimination() {
 
         double lead;
@@ -123,7 +147,7 @@ public class Matrix {
         }
     }
 
-    public void backElimination() {
+    public double[] backElimination() {
 
         double sum = 0;
         double[] sumInverse = new double[size];
@@ -152,6 +176,8 @@ public class Matrix {
         }
 
         inverseMatrix = inverseSolutions;
+
+        return solutions;
     }
 
     private int findMaxLine(int step) {
