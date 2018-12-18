@@ -2,7 +2,6 @@ package RotationMethod;
 
 import common.Matrices;
 import common.MyException;
-import common.Vectors;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,16 +11,14 @@ import java.util.Scanner;
 
     private int size;
     private double[][] originMatrix;
-    private double[][] resultMatrix;
-    private double[] eigenVector;
-    private double[] discrepancyVector;
-
-    private double maxEigenValue;
+    private double[][] workMatrix;
+    private double[][] eigenVectors;
+    private double[] discrepancyVectors;
     private final double EPSILON;
 
     public Rotation(int size) {
         init(size);
-        EPSILON = Math.pow(10, -5);
+        EPSILON = Math.pow(10, -1);
     }
 
     private void init(int size) {
@@ -29,9 +26,9 @@ import java.util.Scanner;
         this.size = size;
 
         originMatrix = new double[size][size];
-        resultMatrix = new double[size][size];
-        eigenVector = new double[size];
-        discrepancyVector = new double[size];
+        workMatrix = new double[size][size];
+        eigenVectors = Matrices.getUnitMatrix(size);
+        discrepancyVectors = new double[size];
     }
 
     public Rotation() {this(1);}
@@ -50,73 +47,128 @@ import java.util.Scanner;
                 }
             }
 
-            resultMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
+           // workMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
+            workMatrix = Matrices.multiple(originMatrix, Matrices.getUnitMatrix(size));
         }
     }
 
     public void method() throws MyException {
 
-        double[] current;
-        double[] previous = Matrices.getUnitMatrix(size)[0];
-        double[] next = new double[size];
-        double[] raitCurrent;
-        double tmp;
-        boolean flag = true;
+        int maxL;
+        int maxC;
+        double cos;
+        double sin;
+        double tmpCos;
+        double tmpTg;
+        double[][] rotationMatrix;
+        double[][] matrixB = new double[size][size];
 
-        while (flag) {
+        int count = 0;
 
-            current = Matrices.multipleWithVector(resultMatrix, previous);
-            raitCurrent = Vectors.rationing(current);
-            next = Matrices.multipleWithVector(resultMatrix, raitCurrent);
+        while(true) {
 
-            flag = false;
+            maxL = checkProximityMeasure();
+            if (maxL == -1) {
+                break;
+            }
+            maxC = findMax(maxL);
+
+            tmpTg = Math.tan((2 * workMatrix[maxL][maxC]) / (workMatrix[maxL][maxL] - workMatrix[maxC][maxC]));
+            tmpCos = Math.cos(1 / (Math.sqrt(1 + Math.pow(tmpTg, 2))));
+            cos = Math.sqrt((1 + tmpCos) / 2);
+            sin = Math.sqrt((1 - tmpCos) / 2)
+                    * Math.signum(workMatrix[maxL][maxC] * (workMatrix[maxL][maxL] - workMatrix[maxC][maxC]));
+/*
             for (int i = 0; i < size; ++i) {
-                tmp = Math.abs((next[i] / raitCurrent[i]) - (current[i] / previous[i]));
-                if (tmp > EPSILON) {
-                    flag = true;
-                    break;
+                matrixB[i] = workMatrix[i].clone();
+            }
+            for (int k = 0; k < size; ++k) {
+                matrixB[k][maxL] = workMatrix[k][maxL] * cos + workMatrix[k][maxC] * sin;
+                matrixB[k][maxC] = workMatrix[k][maxL] * (-sin) + workMatrix[k][maxC] * cos;
+            }
+            for (int k = 0; k < size; ++k) {
+                workMatrix[maxL][k] = matrixB[maxL][k] * cos + matrixB[maxC][k] * sin;
+                workMatrix[maxC][k] = matrixB[maxL][k] * (-sin) + matrixB[maxC][k] * cos;
+            } */
+
+            rotationMatrix = Matrices.getUnitMatrix(size);
+            rotationMatrix[maxL][maxL] = rotationMatrix[maxC][maxC] = cos;
+            rotationMatrix[maxL][maxC] = -sin;
+            rotationMatrix[maxC][maxL] = sin;
+
+            eigenVectors = Matrices.multiple(eigenVectors, rotationMatrix);
+
+            workMatrix = Matrices.multiple(Matrices.transposition(rotationMatrix), Matrices.multiple(workMatrix, rotationMatrix));
+            count ++;
+        }
+
+        System.out.println("Count: " + count + "\n");
+    }
+
+    private int checkProximityMeasure() {
+
+        double prox = 0.0;
+        double maxSum = 0.0;
+        double curSum = 0.0;
+        int maxLine = 0;
+
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                if (i != j) {
+                    curSum += Math.pow(workMatrix[i][j], 2);
                 }
             }
 
-            previous = raitCurrent.clone();
-
-            if (!flag) {
-                maxEigenValue = next[0] / raitCurrent[0];
+            if (Double.compare(curSum, maxSum) > 0) {
+                maxSum = curSum;
+                maxLine = i;
             }
+            prox += curSum;
+            curSum = 0.0;
         }
 
-        eigenVector = next.clone();
+        System.out.println(prox + "\n");
+        if (Double.compare(prox, EPSILON) > 0) {
+            return maxLine;
+        } else {
+            return (-1);
+        }
+    }
+
+    private int findMax(int line) {
+
+        int maxIndex = 0;
+        double max = 0.0;
+        for (int i = 0; i < size; ++i) {
+            if (i != line) {
+                if (Math.abs(workMatrix[line][i]) > max) {
+                    max = Math.abs(workMatrix[line][i]);
+                    maxIndex = i;
+                }
+            }
+        }
+        return maxIndex;
     }
 
     public void showOriginMatrix() {
 
         System.out.println("Origin matrix: \n");
-        Matrices.show(originMatrix);
+        Matrices.show(workMatrix);
     }
 
-    public void showChangedMatrix() {
+    public void showResultMatrix() {
 
-        System.out.println("Symmetric: \n");
-        Matrices.show(resultMatrix);
+        System.out.println("Result: \n");
+        Matrices.showExp(workMatrix);
     }
 
-    public void showEigenValue() {
+    public void showEigenVectors() {
 
-        System.out.println("Eigen value: \n " + maxEigenValue + "\n");
-    }
-
-    public void showEigenVector() {
-
-        System.out.println("Eigen vector: \n");
-        Vectors.show(eigenVector);
+        System.out.println("Eigen Vectors: \n");
+        Matrices.show(eigenVectors);
     }
 
     public void showDiscrepancy() throws MyException {
 
-        discrepancyVector = Vectors.minus(Matrices.multipleWithVector(resultMatrix, eigenVector),
-                Vectors.multipleWithScalar(eigenVector, maxEigenValue));
-
-        System.out.println("Discrepancy vector: \n");
-        Vectors.showExp(discrepancyVector);
     }
 }

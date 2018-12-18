@@ -66,7 +66,8 @@ public class Krylov {
                 eigenValues[i] = Double.parseDouble(sc.next());
             }
 
-            resultMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
+          //  resultMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
+            resultMatrix = Matrices.multiple(originMatrix, Matrices.getUnitMatrix(size));
         }
     }
 

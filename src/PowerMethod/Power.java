@@ -21,7 +21,7 @@ public class Power {
 
     public Power(int size) {
         init(size);
-        EPSILON = Math.pow(10, -5);
+        EPSILON = Math.pow(10, -1);
     }
 
     private void init(int size) {
@@ -63,11 +63,14 @@ public class Power {
         double tmp;
         boolean flag = true;
 
+        int count = 0;
+
         while (flag) {
 
-            current = Matrices.multipleWithVector(resultMatrix, previous);
+            count ++;
+            current = Matrices.multipleWithVector(originMatrix, previous);
             raitCurrent = Vectors.rationing(current);
-            next = Matrices.multipleWithVector(resultMatrix, raitCurrent);
+            next = Matrices.multipleWithVector(originMatrix, raitCurrent);
 
             flag = false;
             for (int i = 0; i < size; ++i) {
@@ -85,7 +88,8 @@ public class Power {
             }
         }
 
-        eigenVector = next.clone();
+        eigenVector = Vectors.divideWithScalar(next, Vectors.cubicRate(next));
+        System.out.println("Iterations: " + count + "\n");
     }
 
     public void showOriginMatrix() {

@@ -1,4 +1,4 @@
-/*package RotationMethod;
+package RotationMethod;
 
 import common.MyException;
 import java.io.IOException;
@@ -9,12 +9,11 @@ public class RotationMethod {
         try {
             Rotation rt = new Rotation();
             rt.input();
-            rt.method();
+            rt.showOriginMatrix();
 
-            rt.showChangedMatrix();
-            rt.showEigenValue();
-            rt.showEigenVector();
-            rt.showDiscrepancy();
+            rt.method();
+            rt.showResultMatrix();
+            rt.showEigenVectors();
 
         } catch (IOException e) {
             System.out.println("Input error!");
@@ -22,4 +21,4 @@ public class RotationMethod {
             System.out.println(e);
         }
     }
-} */
+}

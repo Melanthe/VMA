@@ -58,7 +58,7 @@ public class Danilevskogo {
         }
 
         double[][] transp = Matrices.transposition(originMatrix);
-        originMatrix = Matrices.multiple(transp, originMatrix);
+        //originMatrix = Matrices.multiple(transp, originMatrix);
         for (int i = 0; i < size; ++i) {
          frobeniusMatrix[i] = originMatrix[i].clone();
         }
