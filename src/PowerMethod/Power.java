@@ -57,12 +57,12 @@ public class Power {
     public void method() throws MyException {
 
         double[] current;
-        double[] previous = Matrices.getUnitMatrix(size)[0];
+        double[] previous = {0, 1, 0};
         double[] next = new double[size];
         double[] raitCurrent;
         double tmp;
         boolean flag = true;
-
+//Не забыть поменять originMatrix на resultMatrix
         int count = 0;
 
         while (flag) {
@@ -71,6 +71,15 @@ public class Power {
             current = Matrices.multipleWithVector(originMatrix, previous);
             raitCurrent = Vectors.rationing(current);
             next = Matrices.multipleWithVector(originMatrix, raitCurrent);
+//Удалить
+            System.out.printf("Step %d \n\n Previous:\n", count);
+            Vectors.show(previous);
+            System.out.println("Current:\n");
+            Vectors.show(current);
+            System.out.println("Rationing current: \n");
+            Vectors.show(raitCurrent);
+            System.out.println("Next: \n");
+            Vectors.show(next);
 
             flag = false;
             for (int i = 0; i < size; ++i) {
@@ -88,7 +97,7 @@ public class Power {
             }
         }
 
-        eigenVector = Vectors.divideWithScalar(next, Vectors.cubicRate(next));
+        eigenVector = next.clone();//Vectors.divideWithScalar(next, Vectors.cubicRate(next));
         System.out.println("Iterations: " + count + "\n");
     }
 
@@ -117,7 +126,7 @@ public class Power {
 
     public void showDiscrepancy() throws MyException {
 
-        discrepancyVector = Vectors.minus(Matrices.multipleWithVector(resultMatrix, eigenVector),
+        discrepancyVector = Vectors.minus(Matrices.multipleWithVector(originMatrix, eigenVector),
                 Vectors.multipleWithScalar(eigenVector, maxEigenValue));
 
         System.out.println("Discrepancy vector: \n");

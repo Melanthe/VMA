@@ -15,6 +15,7 @@ public class MethodKrylova {
 
             kv.showChangedMatrix();
             kv.showMatrixC();
+            kv.showEigenPolynomial();
             kv.showEigenVectors();
             kv.showDiscrepancy();
 

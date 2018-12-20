@@ -14,6 +14,7 @@ public class RotationMethod {
             rt.method();
             rt.showResultMatrix();
             rt.showEigenVectors();
+            rt.showDiscrepancy();
 
         } catch (IOException e) {
             System.out.println("Input error!");

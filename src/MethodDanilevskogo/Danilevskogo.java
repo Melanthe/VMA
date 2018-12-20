@@ -58,7 +58,7 @@ public class Danilevskogo {
         }
 
         double[][] transp = Matrices.transposition(originMatrix);
-        //originMatrix = Matrices.multiple(transp, originMatrix);
+        originMatrix = Matrices.multiple(transp, originMatrix);
         for (int i = 0; i < size; ++i) {
          frobeniusMatrix[i] = originMatrix[i].clone();
         }
@@ -72,47 +72,47 @@ public class Danilevskogo {
 
          for (int k = size - 1; k > 0; --k) {
 
-            for (int i = 0; i < size; ++i) {
+             for (int i = 0; i < size; ++i) {
 
-                if (i == (k - 1)) {
-                    vectorM[i] = 1 / frobeniusMatrix[k][k - 1];
-                } else {
-                    vectorM[i] = -(frobeniusMatrix[k][i] / frobeniusMatrix[k][k - 1]);
-                }
-            }
+                 if (i == (k - 1)) {
+                     vectorM[i] = 1 / frobeniusMatrix[k][k - 1];
+                 } else {
+                     vectorM[i] = -(frobeniusMatrix[k][i] / frobeniusMatrix[k][k - 1]);
+                 }
+             }
 
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < size; ++j) {
+             for (int i = 0; i < size; ++i) {
+                 for (int j = 0; j < size; ++j) {
 
-                    if (j != (k - 1)) {
-                        matrixB[i][j] = frobeniusMatrix[i][j] + frobeniusMatrix[i][k - 1] * vectorM[j];
-                    } else {
-                        matrixB[i][j] = frobeniusMatrix[i][j] * vectorM[j];
-                    }
-                }
-            }
+                     if (j != (k - 1)) {
+                         matrixB[i][j] = frobeniusMatrix[i][j] + frobeniusMatrix[i][k - 1] * vectorM[j];
+                     } else {
+                         matrixB[i][j] = frobeniusMatrix[i][j] * vectorM[j];
+                     }
+                 }
+             }
 
-            for (int i = 0; i < k - 1; ++i) {
-                    frobeniusMatrix[i] = matrixB[i].clone();
-            }
+             for (int i = 0; i < k - 1; ++i) {
+                 frobeniusMatrix[i] = matrixB[i].clone();
+             }
 
-            double tmpSum = 0;
-            for (int i = 0; i < size; ++i) {
-                for (int j = 0; j < size; ++j) {
-                    tmpSum += frobeniusMatrix[k][j] * matrixB[j][i];
-                }
-                frobeniusMatrix[k - 1][i] = tmpSum;
-                tmpSum = 0;
-            }
+             double tmpSum = 0;
+             for (int i = 0; i < size; ++i) {
+                 for (int j = 0; j < size; ++j) {
+                     tmpSum += frobeniusMatrix[k][j] * matrixB[j][i];
+                 }
+                 frobeniusMatrix[k - 1][i] = tmpSum;
+                 tmpSum = 0;
+             }
 
-            for (int i = k; i < size; ++i) {
-                frobeniusMatrix[i] = matrixB[i].clone();
-            }
+             for (int i = k; i < size; ++i) {
+                 frobeniusMatrix[i] = matrixB[i].clone();
+             }
 
-            tmp = Matrices.getUnitMatrix(size);
-            tmp[k - 1] = vectorM.clone();
+             tmp = Matrices.getUnitMatrix(size);
+             tmp[k - 1] = vectorM.clone();
 
-            matrixS = Matrices.multiple(matrixS, tmp);
+             matrixS = Matrices.multiple(matrixS, tmp);
          }
     }
 

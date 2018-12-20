@@ -66,8 +66,7 @@ public class Krylov {
                 eigenValues[i] = Double.parseDouble(sc.next());
             }
 
-          //  resultMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
-            resultMatrix = Matrices.multiple(originMatrix, Matrices.getUnitMatrix(size));
+            resultMatrix = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
         }
     }
 
@@ -77,13 +76,13 @@ public class Krylov {
             matrixC[i] = Matrices.multipleWithVector(resultMatrix, matrixC[i - 1]);
         }
         vectorC = Matrices.multipleWithVector(resultMatrix, matrixC[size - 1]);
-    }
-
-    public void getEigenVectors() throws MyException {
 
         Matrix gauss = new Matrix(Matrices.transposition(matrixC), vectorC);
         gauss.forwardElimination();
         eigenPolynomial = gauss.backElimination();
+    }
+
+    public void getEigenVectors() throws MyException {
 
         double[][] beta = new double[size][size];
 
@@ -122,10 +121,19 @@ public class Krylov {
         Matrices.showFull(Matrices.transposition(matrixC), vectorC);
     }
 
+    public void showEigenPolynomial() {
+
+        System.out.println("Egien Polunomial: ");
+        for (int i  = size - 1; i >=0; --i) {
+            System.out.printf("%.5f  ", eigenPolynomial[i]);
+        }
+        System.out.println("\n");
+    }
+
     public void showEigenVectors() {
 
         for (int i = 0; i < size; ++i) {
-            System.out.printf("%5s    ", "x" + (i + 1));
+            System.out.printf("%s     ", "x" + (i + 1));
         }
         System.out.println();
         Matrices.show(Matrices.transposition(eigenVectors));
@@ -133,7 +141,9 @@ public class Krylov {
 
     public void showDiscrepancy() throws MyException {
 
+        System.out.println("Eigen Values:");
         Vectors.show(eigenValues);
+
         for (int i = 0; i < size; ++i) {
             discrepancyMatrix[i] = Vectors.minus(Matrices.multipleWithVector(resultMatrix, eigenVectors[i]),
                     Vectors.multipleWithScalar(eigenVectors[i], eigenValues[i]));

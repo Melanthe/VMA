@@ -2,6 +2,7 @@ package RotationMethod;
 
 import common.Matrices;
 import common.MyException;
+import common.Vectors;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Scanner;
     private double[][] originMatrix;
     private double[][] workMatrix;
     private double[][] eigenVectors;
-    private double[] discrepancyVectors;
+    private double[][] discrepancyVectors;
     private final double EPSILON;
 
     public Rotation(int size) {
@@ -28,7 +29,7 @@ import java.util.Scanner;
         originMatrix = new double[size][size];
         workMatrix = new double[size][size];
         eigenVectors = Matrices.getUnitMatrix(size);
-        discrepancyVectors = new double[size];
+        discrepancyVectors = new double[size][size];
     }
 
     public Rotation() {this(1);}
@@ -60,12 +61,16 @@ import java.util.Scanner;
         double sin;
         double tmpCos;
         double tmpTg;
+        double x;
+        double y;
         double[][] rotationMatrix;
         double[][] matrixB = new double[size][size];
 
         int count = 0;
 
         while(true) {
+//Удалить
+            System.out.printf("Step %d\n\n", count + 1);
 
             maxL = checkProximityMeasure();
             if (maxL == -1) {
@@ -73,23 +78,27 @@ import java.util.Scanner;
             }
             maxC = findMax(maxL);
 
-            tmpTg = Math.tan((2 * workMatrix[maxL][maxC]) / (workMatrix[maxL][maxL] - workMatrix[maxC][maxC]));
-            tmpCos = Math.cos(1 / (Math.sqrt(1 + Math.pow(tmpTg, 2))));
+            tmpTg = (2 * workMatrix[maxL][maxC]) / (workMatrix[maxL][maxL] - workMatrix[maxC][maxC]);
+            tmpCos = 1 / (Math.sqrt(1 + Math.pow(tmpTg, 2)));
             cos = Math.sqrt((1 + tmpCos) / 2);
             sin = Math.sqrt((1 - tmpCos) / 2)
-                    * Math.signum(workMatrix[maxL][maxC] * (workMatrix[maxL][maxL] - workMatrix[maxC][maxC]));
-/*
+                    * Math.signum(tmpTg);
+
             for (int i = 0; i < size; ++i) {
                 matrixB[i] = workMatrix[i].clone();
             }
+
             for (int k = 0; k < size; ++k) {
-                matrixB[k][maxL] = workMatrix[k][maxL] * cos + workMatrix[k][maxC] * sin;
-                matrixB[k][maxC] = workMatrix[k][maxL] * (-sin) + workMatrix[k][maxC] * cos;
+                x = workMatrix[k][maxL];
+                y = workMatrix[k][maxC];
+                workMatrix[k][maxL] = matrixB[k][maxL] = x * cos + y * sin;
+                workMatrix[k][maxC] = matrixB[k][maxC] = x * (-sin) + y * cos;
             }
+
             for (int k = 0; k < size; ++k) {
                 workMatrix[maxL][k] = matrixB[maxL][k] * cos + matrixB[maxC][k] * sin;
                 workMatrix[maxC][k] = matrixB[maxL][k] * (-sin) + matrixB[maxC][k] * cos;
-            } */
+            }
 
             rotationMatrix = Matrices.getUnitMatrix(size);
             rotationMatrix[maxL][maxL] = rotationMatrix[maxC][maxC] = cos;
@@ -98,8 +107,16 @@ import java.util.Scanner;
 
             eigenVectors = Matrices.multiple(eigenVectors, rotationMatrix);
 
-            workMatrix = Matrices.multiple(Matrices.transposition(rotationMatrix), Matrices.multiple(workMatrix, rotationMatrix));
+            //workMatrix = Matrices.multiple(Matrices.transposition(rotationMatrix), Matrices.multiple(workMatrix, rotationMatrix));
+//Удалить
             count ++;
+            System.out.printf("Tg2: %f    Cos2: %f\n", tmpTg, tmpCos);
+            System.out.printf("Cos: %f   Sin: %f   \nIndexes of max el: i:%d j:%d\n\nMatrix B:\n", cos, sin, maxL, maxC);
+            Matrices.show(matrixB);
+            System.out.println("Matrix of this step:\n");
+            Matrices.show(workMatrix);
+            System.out.println("Matrix V on this step:\n");
+            Matrices.show(eigenVectors);
         }
 
         System.out.println("Count: " + count + "\n");
@@ -126,8 +143,8 @@ import java.util.Scanner;
             prox += curSum;
             curSum = 0.0;
         }
-
-        System.out.println(prox + "\n");
+//Удалить
+        System.out.printf("Proximity measure: %f\n\n", prox);
         if (Double.compare(prox, EPSILON) > 0) {
             return maxLine;
         } else {
@@ -170,5 +187,20 @@ import java.util.Scanner;
 
     public void showDiscrepancy() throws MyException {
 
+        double[][] tmpEigen = Matrices.transposition(eigenVectors);
+        double[][] tmpOrigin = Matrices.multiple(Matrices.transposition(originMatrix), originMatrix);
+
+        for (int i = 0; i < size; ++i) {
+            discrepancyVectors[i] = Vectors.minus(Matrices.multipleWithVector(tmpOrigin, tmpEigen[i]),
+                    Vectors.multipleWithScalar(tmpEigen[i], workMatrix[i][i]));
+        }
+
+        System.out.println("Discrepancy of engine vectors: \n");
+
+        for (int i = 0; i < size; ++i) {
+            System.out.printf("%8s     ", "x" + (i + 1));
+        }
+        System.out.println();
+        Matrices.showExp(Matrices.transposition(discrepancyVectors));
     }
 }
